@@ -94,14 +94,14 @@ try {
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }
-            else if(!preg_match("/[0-9]{2}(0[1-9]|1[012])(0[1-9]|1[0-9]|2[0-9]|3[01])/", $birth)){
+            else if(!preg_match("/^[[0-9]{2}(0[1-9]|1[012])(0[1-9]|1[0-9]|2[0-9]|3[01])]{6,6}$/", $birth)){
                 $res->isSuccess = false;
                 $res->code = 500;
                 $res->message = "잘못된 형식의 입력값입니다.";
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }
-            else if(!preg_match("/^[A-Za-z0-9+]{2,10}$/", $nickName)){
+            else if(!preg_match("/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{2,10}$/", $nickName)){
                 $res->isSuccess = false;
                 $res->code = 501;
                 $res->message = "너무 길거나 짧은 입력값입니다.";
@@ -115,7 +115,21 @@ try {
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }
-            $Able = SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName);
+            $able = SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName);
+            if($able==1){
+                $res->isSuccess = false;
+                $res->code = 100;
+                $res->message = "회원가입에 성공하였습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+            else{
+                $res->isSuccess = false;
+                $res->code = 502;
+                $res->message = "이미 등록되어 있습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
 
     }
 } catch (\Exception $e) {
