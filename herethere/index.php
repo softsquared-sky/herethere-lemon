@@ -1,6 +1,7 @@
 <?php
 require './pdos/DatabasePdo.php';
 require './pdos/IndexPdo.php';
+require './pdos/UserPdo.php';
 require './vendor/autoload.php';
 
 use \Monolog\Logger as Logger;
@@ -21,7 +22,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 //    $r->addRoute('POST', '/test', ['IndexController', 'testPost']);
 //    $r->addRoute('GET', '/jwt', ['MainController', 'validateJwt']);
 //    $r->addRoute('POST', '/jwt', ['MainController', 'createJwt']);
-    $r->addRoute('POST', '/user', ['IndexController', 'SignUp']);
+    $r->addRoute('POST', '/user', ['UserController', 'signUp']);
 
 
 
@@ -80,6 +81,11 @@ switch ($routeInfo[0]) {
                 $handler = $routeInfo[1][1];
                 $vars = $routeInfo[2];
                 require './controllers/MainController.php';
+                break;
+            case 'UserController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/UserController.php';
                 break;
             /*case 'EventController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];

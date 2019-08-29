@@ -50,24 +50,6 @@ function testPost($name)
 
 }
 
-function SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName){
-    $pdo = pdoSqlConnect();
-    $query = "INSERT INTO User SELECT ?, ?, ?, ?,?, ?,?
- FROM DUAL WHERE NOT EXISTS (SELECT ?, ? FROM User WHERE email = ? OR nickName = ?)";
-    // email 또는 nickName 이 중복되었을 경우 실행 x
-
-    $st = $pdo->prepare($query);
-    $st->execute([$email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName, $email, $nickName, $email, $nickName]);
-    $count = $st->rowCount();   // insert가 실행되었는지 쿼리의 여부
-
-    if($count>0){
-        return 1;
-    }
-    else{
-        return 0;
-    }
-
-}
 
 // CREATE
 //    function addMaintenance($message){
