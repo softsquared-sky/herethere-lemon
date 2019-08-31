@@ -61,6 +61,10 @@ try {
                     $nickName=$req->nickName;
                     $schoolPicture=$req->schoolPicture;
                     $schoolName=$req->schoolName;
+                    $locationNo =Array();
+                    $xml_data=json_encode($req -> locationList);
+                    $locationNo=json_decode($xml_data,true);
+
 
                     if(!preg_match("/^[A-Za-z0-9+]{4,12}$/", $password)){
                         $res->isSuccess = false;
@@ -100,23 +104,51 @@ try {
                         echo json_encode($res, JSON_NUMERIC_CHECK);
                         return;
                     }
+                    if(!isRedundantNo($locationNo)){
+                        $res->isSuccess = false;
+                        $res->code = 500;
+                        $res->message = "잘못된 형식의 입력값입니다.";
+                        echo json_encode($res, JSON_NUMERIC_CHECK);
+                        return;
+                    }
+                    SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName,$locationNo);
 
-                    $register = isSignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName);
-                    if($register){
-                        $res->isSuccess = false;
-                        $res->code = 100;
-                        $res->message = "회원가입에 성공하였습니다.";
-                        echo json_encode($res, JSON_NUMERIC_CHECK);
-                        return;
-                    }
-                    else{
-                        $res->isSuccess = false;
-                        $res->code = 502;
-                        $res->message = "이미 등록되어 있습니다.";
-                        echo json_encode($res, JSON_NUMERIC_CHECK);
-                        return;
-                    }
+                    $res->isSuccess = true;
+                    $res->code = 100;
+                    $res->message = "회원가입에 성공하였습니다.";
+                    echo json_encode($res, JSON_NUMERIC_CHECK);
                     break;
+            }
+            break;
+
+        case "location":
+            $res->result = locationList();
+            $res->isSuccess = true;
+            $res->code = 102;
+            $res->message = "조회에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+
+        case "login":
+            $email = $req -> email;
+            $password = $req -> password;
+
+            if(isRedundantUser($email, $password)) {
+                $jwt = getJWToken($email, $password, JWT_SECRET_KEY);
+                $res->result->jwt = $jwt;
+                $res->isSuccess = TRUE;
+                $res->code = 101;
+                $res->message = "로그인에 성공하였습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+            else{
+                $res->isSuccess = FALSE;
+                $res->code = 506;
+                $res->message = "입력하신 이메일 또는 비밀번호가 잘못되었거나, 가입되어있는 정보가 없습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
             }
     }
 } catch (\Exception $e) {

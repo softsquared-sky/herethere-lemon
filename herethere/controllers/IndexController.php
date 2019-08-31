@@ -13,6 +13,7 @@ try {
     addAccessLogs($accessLogs, $req);
     switch ($handler) {
         case "index":
+
             echo "API Server";
             break;
         case "ACCESS_LOGS":
@@ -31,6 +32,8 @@ try {
          * 마지막 수정 날짜 : 19.04.29
          */
         case "test":
+            $test = $_GET['test'];
+            echo $test;
             http_response_code(200);
             $res->result = test();
             $res->isSuccess = TRUE;

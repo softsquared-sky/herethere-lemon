@@ -23,6 +23,8 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 //    $r->addRoute('GET', '/jwt', ['MainController', 'validateJwt']);
 //    $r->addRoute('POST', '/jwt', ['MainController', 'createJwt']);
     $r->addRoute('POST', '/user', ['UserController', 'signUp']);
+    $r->addRoute('GET', '/location', ['UserController', 'location']);
+    $r->addRoute('POST', '/jwt', ['UserController', 'login']);
 
 
 
