@@ -111,8 +111,8 @@ try {
                         echo json_encode($res, JSON_NUMERIC_CHECK);
                         return;
                     }
-                    SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName,$locationNo);
 
+                    SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName,$locationNo);
                     $res->isSuccess = true;
                     $res->code = 100;
                     $res->message = "회원가입에 성공하였습니다.";

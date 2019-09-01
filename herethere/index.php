@@ -25,6 +25,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('POST', '/user', ['UserController', 'signUp']);
     $r->addRoute('GET', '/location', ['UserController', 'location']);
     $r->addRoute('POST', '/jwt', ['UserController', 'login']);
+    $r->addRoute('GET', '/posts', ['PostController', 'posts']);
 
 
 
@@ -89,14 +90,16 @@ switch ($routeInfo[0]) {
                 $vars = $routeInfo[2];
                 require './controllers/UserController.php';
                 break;
+            case 'PostController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/PostController.php';
+                break;
             /*case 'EventController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
                 require './controllers/EventController.php';
                 break;
-            case 'ProductController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/ProductController.php';
-                break;
+
             case 'SearchController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
                 require './controllers/SearchController.php';

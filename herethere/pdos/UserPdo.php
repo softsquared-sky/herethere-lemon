@@ -71,41 +71,36 @@ nickName = ?);";
     $st = $pdo->prepare($query);
     //    $st->execute([$param,$param]);
     $st->execute([$email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName, $email, $nickName]);
-
-
-
-//    $test = Array();
-////
-////    $test[] = $locationNo[0]['locationNo'];
-////    $test[] = $locationNo[1]['locationNo'];
 //
 //
-//
-//    $splitNo = implode('.',$test);
+    $query = "INSERT INTO UserProfile SELECT ?,?,? FROM DUAL WHERE NOT EXISTS (SELECT email FROM UserProfile WHERE email=?);";
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$email,NULL,NULL,$email]);
+
+//    $splitNo = implode('\', \'',$test);
 ////    $a  = str_replace(array("/"),' ',$splitNo);
-//
-//    print_r($splitNo);
-//
+
 //    $test = "1,2";
 //    echo $test;
 //
 //    $test2 = "a,b";
 //    echo $test2;
-//
-//
+//    $a = '\'';
+//    $b = '\'';
+//    $splitNo = $a.$splitNo.$b;
+//    print_r($splitNo);
 ////    $query = "SELECT * FROM LocationList;";
-//
-//
-//    $query = "SELECT * FROM LocationList WHERE locationNo IN(?);";
-////    "INSERT INTO UserLocation (email, location) VALUES (?,
-//
-//    $st = $pdo->prepare($query);
-//    $st->execute([$splitNo]);
-//
-//    $st->setFetchMode(PDO::FETCH_ASSOC);
-//    $res = $st->fetchAll();
-//
-//    echo $res[1]['location'];
+    $count = 0;
+
+    while($count < count($locationNo)) {
+        $query = "INSERT INTO UserLocation (email, location) SELECT ?, b.location FROM User a inner join LocationList b on b.locationNo = ? and a.email = ?;);";
+
+        $st = $pdo->prepare($query);
+        $st->execute([$email, $locationNo[$count]['locationNo'],$email]);
+        $count = $count +1;
+
+    }
     $st = null;
     $pdo = null;
 }
