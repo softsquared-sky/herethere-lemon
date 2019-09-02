@@ -10,6 +10,8 @@ try {
     addAccessLogs($accessLogs, $req);
     switch ($handler) {
         case "posts":
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+            $no = $_GET['current'];
             if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
                 $res->isSuccess = FALSE;
                 $res->code = 511;
@@ -18,7 +20,15 @@ try {
                 addErrorLogs($errorLogs, $res, $req);
                 return;
             }
-            $bool=isExistPosts();
+            if(!is_numeric($no) || !preg_match( "/[0-9]{0,10}/i", $no )){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+//            || !preg_match( "/[0-9]{0,10}/i", $no )
+            $bool=isExistPosts($no);
             if(!$bool){
                 $res->isSuccess = TRUE;
                 $res->code = 103;
@@ -28,6 +38,7 @@ try {
 
                 return;
             }
+            $res->result = isExistPosts($no);
             $res->isSuccess = TRUE;
             $res->code = 102;
             $res->message = "조회에 성공하였습니다.";

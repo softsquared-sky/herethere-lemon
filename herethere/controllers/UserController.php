@@ -15,6 +15,7 @@ try {
         case "signUp":
             $reqType=$req->reqType;
 
+
             switch($reqType){
                 case EMAIL_VALID_CHECK_TYPE:
                     $email=$req->email;
@@ -66,18 +67,18 @@ try {
                     $locationNo=json_decode($xml_data,true);
 
 
-                    if(!preg_match("/^[A-Za-z0-9+]{4,12}$/", $password)){
-                        $res->isSuccess = false;
-                        $res->code = 503;
-                        $res->message = "비밀번호는 영어, 숫자를 포함한 6~10자리입니다.";
-                        echo json_encode($res, JSON_NUMERIC_CHECK);
-                        return;
-                    }
-
                     if($password!=$rePassword){
                         $res->isSuccess = false;
                         $res->code = 504;
                         $res->message = "비밀번호가 일치하지 않습니다.";
+                        echo json_encode($res, JSON_NUMERIC_CHECK);
+                        return;
+                    }
+
+                    if(!preg_match("/^[A-Za-z0-9+]{4,12}$/", $password)){
+                        $res->isSuccess = false;
+                        $res->code = 503;
+                        $res->message = "비밀번호는 영어, 숫자를 포함한 6~10자리입니다.";
                         echo json_encode($res, JSON_NUMERIC_CHECK);
                         return;
                     }
@@ -111,6 +112,13 @@ try {
                         echo json_encode($res, JSON_NUMERIC_CHECK);
                         return;
                     }
+//                default:
+//                    echo 11;
+//                    $res->isSuccess = false;
+//                    $res->code = 500;
+//                    $res->message = "잘못된 형식의 입력값입니다.";
+//                    echo json_encode($res, JSON_NUMERIC_CHECK);
+//                    break;
 
                     SignUp($email, $password, $name, $birth, $nickName, $schoolPicture, $schoolName,$locationNo);
                     $res->isSuccess = true;

@@ -78,19 +78,20 @@ nickName = ?);";
     //    $st->execute([$param,$param]);
     $st->execute([$email,NULL,NULL,$email]);
 
-//    $splitNo = implode('\', \'',$test);
+//    $locationCount = 0;
+//    $locationList = Array();
+//
+//    while($locationCount<count($locationNo)){
+//        $locationList[$locationCount]= $locationNo[$locationCount]['locationNo'];
+//
+//        $locationCount=$locationCount+1;
+//    }
+
+//    $splitNo = implode(',',$locationList);
+//    echo $splitNo;
+
 ////    $a  = str_replace(array("/"),' ',$splitNo);
 
-//    $test = "1,2";
-//    echo $test;
-//
-//    $test2 = "a,b";
-//    echo $test2;
-//    $a = '\'';
-//    $b = '\'';
-//    $splitNo = $a.$splitNo.$b;
-//    print_r($splitNo);
-////    $query = "SELECT * FROM LocationList;";
     $count = 0;
 
     while($count < count($locationNo)) {
@@ -101,6 +102,17 @@ nickName = ?);";
         $count = $count +1;
 
     }
+
+//    $query = "INSERT INTO UserLocation (email, location) SELECT ?, b.location FROM
+//User a inner join (SELECT * FROM LocationList WHERE locationNo IN (?)) b on a.email = ?;";
+//
+//    $st = $pdo->prepare($query);
+//    $st -> bindParam(1, $email, PDO::PARAM_STR);
+//    $st -> bindParam(2, $splitNo, PDO::PARAM);
+//    $st -> bindParam(3, $email, PDO::PARAM_STR);
+//    $st->execute();
+
+
     $st = null;
     $pdo = null;
 }
