@@ -66,6 +66,12 @@ try {
                     $xml_data=json_encode($req -> locationList);
                     $locationNo=json_decode($xml_data,true);
 
+//                    $resss = $matches;
+//
+//                    if($matches[0]!=NULL){
+//                        echo 1;
+//                    }
+
 
                     if($password!=$rePassword){
                         $res->isSuccess = false;
@@ -98,7 +104,9 @@ try {
                         echo json_encode($res, JSON_NUMERIC_CHECK);
                         return;
                     }
-                    if(!preg_match("/^(http\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[a-zA-Z0-9_])+\.(?:jpg|jpeg|gif|png))$/", $schoolPicture)){
+                    preg_match_all("/^http[s]?:\/\/.*\.(jp[e]?g|gif|png)/Ui"
+                        , $schoolPicture,$matches);
+                    if($matches[0]==NULL){
                         $res->isSuccess = false;
                         $res->code = 505;
                         $res->message = "첨부할수 없는 이미지입니다.";

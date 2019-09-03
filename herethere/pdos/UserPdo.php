@@ -145,7 +145,7 @@ function locationList(){
 
 function isRedundantUser($email, $password){
     $pdo = pdoSqlConnect();
-    $query = "SELECT EXISTS(SELECT email, password FROM user WHERE email= ? AND password=?) AS exist;";
+    $query = "SELECT EXISTS(SELECT email, password FROM User WHERE email= ? AND password=?) AS exist;";
 
 
     $st = $pdo->prepare($query);

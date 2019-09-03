@@ -96,3 +96,50 @@ function isExistPosts($no)
     $st=null;$pdo = null;
     return $data;
 }
+
+function isRedundantLocation($postLocation){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT EXISTS(SELECT location FROM LocationList WHERE location= ? ) AS exist;";
+
+
+    $st = $pdo->prepare($query);
+
+    $st->execute([$postLocation]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return intval($res[0]["exist"]);
+}
+
+//function postPosts($postPicture,$postLocation, $postContents, $email, $postTime){
+//    $pdo = pdoSqlConnect();
+//    $query = "INSERT INTO Posts (email, postContents, postLocation, postTime, heartCount);";
+//
+//    $st = $pdo->prepare($query);
+//    $st->execute([$email, $postContents,$postLocation, $postTime,0]);
+//    $st->setFetchMode(PDO::FETCH_ASSOC);
+//    $res = $st->fetchAll();
+//
+//
+////    $query1= "INSERT INTO Picture (postNo, pictureNo, postPicture) VALUES "
+//    if(count($postPicture)==0){
+//        $query1="INSERT INTO Picture (postNo, pictureNo, postPicture) VALUES (?, ?, ?)";
+//        $st = $pdo->prepare($query1);
+//        $st->execute([$res[0]['postNo'], NULL, NULL]);
+//    }
+//    else{
+//
+//    }
+//    $question_marks = Array();
+//    $question_marks[0]= "(?,?,?)";
+//    $question_marks[1]= "(?,?,?)";
+//
+//
+//        "INSERT INTO table (" . implode(",", $datafields ) . ") VALUES " .
+//        implode(',', $question_marks);
+//
+//    $postLocation
+//
+//}

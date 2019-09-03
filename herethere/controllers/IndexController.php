@@ -13,7 +13,6 @@ try {
     addAccessLogs($accessLogs, $req);
     switch ($handler) {
         case "index":
-
             echo "API Server";
             break;
         case "ACCESS_LOGS":

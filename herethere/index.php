@@ -2,6 +2,7 @@
 require './pdos/DatabasePdo.php';
 require './pdos/IndexPdo.php';
 require './pdos/UserPdo.php';
+require './pdos/PostPdo.php';
 require './vendor/autoload.php';
 
 use \Monolog\Logger as Logger;
@@ -26,6 +27,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/location', ['UserController', 'location']);
     $r->addRoute('POST', '/jwt', ['UserController', 'login']);
     $r->addRoute('GET', '/posts', ['PostController', 'posts']);
+    $r->addRoute('POST', '/posts', ['PostController', 'addPost']);
 
 
 
