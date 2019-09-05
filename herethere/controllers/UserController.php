@@ -66,11 +66,28 @@ try {
                     $xml_data=json_encode($req -> locationList);
                     $locationNo=json_decode($xml_data,true);
 
+                  //isset 함수 사용
+
 //                    $resss = $matches;
 //
 //                    if($matches[0]!=NULL){
 //                        echo 1;
 //                    }
+                    if(isRedundantEmail($email)){
+                        $res->isSuccess = false;
+                        $res->code = 506;
+                        $res->message = "이미 등록되어 있습니다.";
+                        echo json_encode($res, JSON_NUMERIC_CHECK);
+                        return;
+                    }
+
+                    if(isRedundantNickName($nickName)){
+                        $res->isSuccess = false;
+                        $res->code = 506;
+                        $res->message = "이미 등록되어 있습니다.";
+                        echo json_encode($res, JSON_NUMERIC_CHECK);
+                        return;
+                    }
 
 
                     if($password!=$rePassword){

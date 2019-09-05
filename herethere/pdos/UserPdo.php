@@ -92,16 +92,28 @@ nickName = ?);";
 
 ////    $a  = str_replace(array("/"),' ',$splitNo);
 
-    $count = 0;
-
-    while($count < count($locationNo)) {
-        $query = "INSERT INTO UserLocation (email, location) SELECT ?, b.location FROM User a inner join LocationList b on b.locationNo = ? and a.email = ?;);";
-
-        $st = $pdo->prepare($query);
-        $st->execute([$email, $locationNo[$count]['locationNo'],$email]);
-        $count = $count +1;
-
+    $question_Count = 0;
+    $question_Mark = Array();
+    while($question_Count<count($locationNo)){
+        $question_Mark[$question_Count] = '?';
+        $question_Count=$question_Count+1;
     }
+
+    $question_Marks = implode(',', $question_Mark);
+
+
+    $query = "INSERT INTO UserLocation (email, location) SELECT a.email, b.location
+ FROM User a inner join (SELECT * FROM LocationList WHERE locationNo IN ($question_Marks)) b on a.email = ?;";
+    $st = $pdo->prepare($query);
+    $locationCount = 0;
+
+    while($locationCount<count($locationNo)) {
+        $st->bindParam($locationCount+1,$locationNo[$locationCount]['locationNo'], PDO::PARAM_INT);
+        $locationCount=$locationCount+1;
+    }
+    $st->bindParam($locationCount+1,$email, PDO::PARAM_STR);
+
+    $st->execute();
 
 //    $query = "INSERT INTO UserLocation (email, location) SELECT ?, b.location FROM
 //User a inner join (SELECT * FROM LocationList WHERE locationNo IN (?)) b on a.email = ?;";

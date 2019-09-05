@@ -120,13 +120,43 @@ try {
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }
-//            $postTime =getTodayByTimeStamp();
-//            postPosts($postPicture,$postLocation, $postContents, $email, $postTime);
+            $postTime =getTodayByTimeStamp();
+            postPosts($postPicture,$postLocation, $postContents, $email, $postTime);
 
 
             $res->isSuccess = true;
             $res->code = 105;
             $res->message = "동록에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
+
+        case "post":
+
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+            if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+                $res->isSuccess = FALSE;
+                $res->code = 511;
+                $res->message = "유효하지 않은 토큰입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+
+            $postNo = $vars["postNo"];
+
+            if(isRedundantLocation($postNo)){
+                $res->isSuccess =false;
+                $res->code = 507;
+                $res->message = "해당하는 게시글이 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+
+            $res->result =showPost($postNo);
+            $res->isSuccess = true;
+            $res->code = 102;
+            $res->message = "조회에 성공하였습니다.";
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
     }
