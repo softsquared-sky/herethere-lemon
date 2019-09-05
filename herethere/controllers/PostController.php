@@ -112,8 +112,8 @@ try {
                 return;
             }
 
-            if(mb_strlen('$postContents', 'utf-8')>1000 ||
-                mb_strlen('$postContents', 'utf-8')<1){
+            if(mb_strlen($postContents, 'utf-8')>1000 ||
+                mb_strlen($postContents, 'utf-8')<1){
                 $res->isSuccess = false;
                 $res->code = 501;
                 $res->message = "너무 길거나 짧은 입력값입니다.";

@@ -3,6 +3,7 @@ require './pdos/DatabasePdo.php';
 require './pdos/IndexPdo.php';
 require './pdos/UserPdo.php';
 require './pdos/PostPdo.php';
+require './pdos/CommentPdo.php';
 require './vendor/autoload.php';
 
 use \Monolog\Logger as Logger;
@@ -12,7 +13,7 @@ date_default_timezone_set('Asia/Seoul');
 ini_set('default_charset', 'utf8mb4');
 
 //에러출력하게 하는 코드
-error_reporting(E_ALL); ini_set("display_errors", 1);
+//error_reporting(E_ALL); ini_set("display_errors", 1);
 
 //Main Server API
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
@@ -29,7 +30,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/posts', ['PostController', 'posts']);
     $r->addRoute('POST', '/posts', ['PostController', 'addPost']);
     $r->addRoute('GET', '/post/{postNo}', ['PostController', 'post']);
-//    $r->addRoute('POST', '/comment', ['CommentController', 'addComment']);
+    $r->addRoute('POST', '/comment', ['CommentController', 'addComment']);
+    $r->addRoute('GET', '/comment', ['CommentController', 'comments']);
+    $r->addRoute('POST', '/heart', ['CommentController', 'addHeart']);
 
 
 
@@ -99,11 +102,11 @@ switch ($routeInfo[0]) {
                 $vars = $routeInfo[2];
                 require './controllers/PostController.php';
                 break;
-//            case 'CommentController':
-//                $handler = $routeInfo[1][1];
-//                $vars = $routeInfo[2];
-//                require './controllers/CommentController.php';
-//                break;
+            case 'CommentController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/CommentController.php';
+                break;
 
             /*case 'SearchController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
