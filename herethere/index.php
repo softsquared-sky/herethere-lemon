@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require './pdos/DatabasePdo.php';
 require './pdos/IndexPdo.php';
 require './pdos/UserPdo.php';
@@ -33,6 +33,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('POST', '/comment', ['CommentController', 'addComment']);
     $r->addRoute('GET', '/comment', ['CommentController', 'comments']);
     $r->addRoute('POST', '/heart', ['CommentController', 'addHeart']);
+    $r->addRoute('GET', '/user/{email}/profile', ['UserController', 'profile']);
 
 
 

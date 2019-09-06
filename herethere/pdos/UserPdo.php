@@ -172,4 +172,23 @@ function isRedundantUser($email, $password){
 
 }
 
+function profile($email){
+    $pdo = pdoSqlConnect();
+
+    $query = "SELECT a.userPicture, b.nickName, a.email, b.schoolName, a.status FROM UserProfile a 
+INNER JOIN User b on a.email=b.email WHERE a.email = ?";
+
+    $st = $pdo->prepare($query);
+    //    $st->execute([$param,$param]);
+    $st->execute([$email]);
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    $st=null;$pdo = null;
+
+    return $res;
+}
+
+
+
 

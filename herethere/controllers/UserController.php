@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require 'function.php';
 
 
@@ -183,7 +183,48 @@ try {
                 echo json_encode($res, JSON_NUMERIC_CHECK);
                 return;
             }
+
+        case "profile":
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+
+            if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+                $res->isSuccess = FALSE;
+                $res->code = 511;
+                $res->message = "유효하지 않은 토큰입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+            $email = $vars["email"];
+            $blank = ' ';
+
+
+            if(!isset($email) ||  empty($email) || !strpos($email,$blank)==false){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i", $email))
+            {
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            $res -> result = profile($email);
+            $res->isSuccess = true;
+            $res->code = 102;
+            $res->message = "조회에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
     }
+
+
 } catch (\Exception $e) {
     return getSQLErrorException($errorLogs, $e, $req);
 }
