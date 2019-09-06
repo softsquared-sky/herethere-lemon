@@ -168,6 +168,7 @@ function isRedundantUser($email, $password){
 
     $st=null;$pdo = null;
 
+
     return intval($res[0]["exist"]);
 
 }
@@ -187,6 +188,112 @@ INNER JOIN User b on a.email=b.email WHERE a.email = ?";
     $st=null;$pdo = null;
 
     return $res;
+}
+
+function isExistPost($no, $email){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT a.postNo, b.userPicture, c.nickName, a.postLocation, a.postTime, a.postContents
+    , a.heartCount, a.commentCount FROM Posts a INNER JOIN UserProfile b on a.email = b.email INNER JOIN
+     User c on a.email = c.email WHERE a.email = ? ORDER BY a.postTime LIMIT ?,5;";
+//    SELECT postNo, COUNT(*) AS comment FROM Comment where postNo = ?;
+    $number = $no;
+    $st = $pdo->prepare($query);
+    $st->bindParam(1, $email, PDO::PARAM_STR);
+    $st->bindParam(2, $number, PDO::PARAM_INT);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+
+    if(count($res)==0) {
+        return FALSE;
+    }
+
+    $query1 = "SELECT * FROM Picture ORDER BY postNo,pictureNo;";
+    $st = $pdo->prepare($query1);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res1 = $st->fetchAll();
+
+    $data = Array();
+
+    $postCount = 0;
+    $timeCount = 0;
+    $timeAgo = Array();
+    while ($timeCount < count($res)) {
+        $res[$timeCount]['postTime'] =   strtotime(getTodayByTimeStamp())- strtotime($res[$timeCount]['postTime']);
+        if ($res[$timeCount]['postTime'] / 60 < 1) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime']);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].' 초 전';
+        } else if ($res[$timeCount]['postTime'] / 60 >= 1 && $res[$timeCount]['postTime'] / 60 < 60) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime'] / 60);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].'분 전';
+        } else if ($res[$timeCount]['postTime'] / 60 >= 60 && $res[$timeCount]['postTime'] / 3600 < 24) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime'] / 3600);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].'시간 전';
+        } else if ($res[$timeCount]['postTime'] / 3600 >= 24 && $res[$timeCount]['postTime'] / 3600 / 24 < 30) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime'] / 3600 / 24);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].'일 전';
+        } else if ($res[$timeCount]['postTime'] / 3600 * 24 >= 30 && $res[$timeCount]['postTime'] / 3600 /24 < 365) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime'] / 3600 / 24 / 30);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].'달 전';
+        } else if ($res[$timeCount]['postTime'] / 3600 * 24 >= 365) {
+            $res[$timeCount]['postTime'] = floor($res[$timeCount]['postTime'] / 3600 / 24 / 365);
+            $timeAgo[$timeCount] = ''.$res[$timeCount]['postTime'].'년 전';
+        }
+        $timeCount = $timeCount + 1;
+    }
+
+
+
+    while ($postCount < count($res)) {
+        $pictureCount = 0;
+        $count = 0;
+        $pictureData = Array();
+        $data[$postCount]['postNo'] = $res[$postCount]['postNo'];
+        $data[$postCount]['userPicture'] = $res[$postCount]['userPicture'];
+        $data[$postCount]['nickName'] = $res[$postCount]['nickName'];
+        $data[$postCount]['postLocation'] = $res[$postCount]['postLocation'];
+        $data[$postCount]['timeAgo'] = $timeAgo[$postCount];
+        $data[$postCount]['postContents'] = $res[$postCount]['postContents'];
+        while ($pictureCount < count($res1)) {
+            if($res[$postCount]['postNo']==$res1[$pictureCount]['postNo']) {
+                $pictureData[$count]['postPicture'] = $res1[$pictureCount]['postPicture'];
+                $count = $count +1;
+            }
+            $pictureCount = $pictureCount + 1;
+        }
+        $data[$postCount]['pictureList'] = $pictureData;
+        $data[$postCount]['heart'] = $res[$postCount]['heartCount'];
+        $data[$postCount]['comment'] = '답글 '.$res[$postCount]['commentCount'].'개';
+
+//        array_push($test["result"], $data);
+        $postCount = $postCount + 1;
+    }
+    $st=null;$pdo = null;
+    return $data;
+
+
+}
+
+function isExistPicture($no, $email){
+    $pdo = pdoSqlConnect();
+    $query = "SELECT a.postPicture FROM Picture a INNER JOIN Posts b on a.postNo = b.postNo WHERE b.email = ? ORDER BY b.postNo, a.pictureNo LIMIT ?,16;";
+//    SELECT postNo, COUNT(*) AS comment FROM Comment where postNo = ?;
+    $number = $no;
+    $st = $pdo->prepare($query);
+    $st->bindParam(1, $email, PDO::PARAM_STR);
+    $st->bindParam(2, $number, PDO::PARAM_INT);
+    $st->execute();
+    $st->setFetchMode(PDO::FETCH_ASSOC);
+    $res = $st->fetchAll();
+
+    if(count($res)==0) {
+        return FALSE;
+    }
+    else{
+        return $res;
+    }
 }
 
 

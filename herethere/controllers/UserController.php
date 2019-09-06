@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require 'function.php';
 
 
@@ -222,9 +222,159 @@ try {
             $res->message = "조회에 성공하였습니다.";
             echo json_encode($res, JSON_NUMERIC_CHECK);
             break;
+
+        case "userPosts":
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+
+            if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+                $res->isSuccess = FALSE;
+                $res->code = 511;
+                $res->message = "유효하지 않은 토큰입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+            $no = $_GET['current'];
+            $email = $vars["email"];
+            $blank = ' ';
+
+            if(!isset($no)  || !strpos($no,$blank)==false
+            || !isset($email) ||  empty($email) || !strpos($email,$blank)==false){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!is_numeric($no) || !preg_match( "/^(0|-?[1-9][0-9]*)$/", $no ) || $no<0){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+            if(!preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i", $email))
+            {
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!isRedundantEmail($email)){
+                $res->isSuccess = TRUE;
+                $res->code = 510;
+                $res->message = "해당하는 유저가 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+
+                return;
+            }
+//            || !preg_match( "/[0-9]{0,10}/i", $no )
+            $bool=isExistPost($no, $email);
+            if(!$bool){
+                $res->isSuccess = TRUE;
+                $res->code = 103;
+                $res->message = "게시글이 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+
+                return;
+            }
+
+
+            $bool=isExistPost($no, $email);
+            if(!$bool){
+                $res->isSuccess = TRUE;
+                $res->code = 103;
+                $res->message = "게시글이 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+
+                return;
+            }
+            $res->result = isExistPost($no, $email);
+            $res->isSuccess = TRUE;
+            $res->code = 102;
+            $res->message = "조회에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            addErrorLogs($errorLogs, $res, $req);
+            break;
+
+        case "userPictures":
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
+
+            if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+                $res->isSuccess = FALSE;
+                $res->code = 511;
+                $res->message = "유효하지 않은 토큰입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+            $no = $_GET['current'];
+            $email = $vars["email"];
+            $blank = ' ';
+
+            if(!isset($no)  || !strpos($no,$blank)==false
+                || !isset($email) ||  empty($email) || !strpos($email,$blank)==false){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!is_numeric($no) || !preg_match( "/^(0|-?[1-9][0-9]*)$/", $no ) || $no<0){
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+            if(!preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i", $email))
+            {
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!isRedundantEmail($email)){
+                $res->isSuccess = TRUE;
+                $res->code = 510;
+                $res->message = "해당하는 유저가 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+
+                return;
+            }
+//            || !preg_match( "/[0-9]{0,10}/i", $no )
+            $bool=isExistPicture($no, $email);
+            if(!$bool){
+                $res->isSuccess = TRUE;
+                $res->code = 106;
+                $res->message = "사진이 존재하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+
+                return;
+            }
+
+            $res->result = isExistPicture($no, $email);
+            $res->isSuccess = TRUE;
+            $res->code = 102;
+            $res->message = "조회에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            addErrorLogs($errorLogs, $res, $req);
+            break;
+
+
+
     }
-
-
 } catch (\Exception $e) {
     return getSQLErrorException($errorLogs, $e, $req);
 }
