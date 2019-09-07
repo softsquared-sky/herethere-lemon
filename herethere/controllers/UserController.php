@@ -372,7 +372,73 @@ try {
             addErrorLogs($errorLogs, $res, $req);
             break;
 
+        case "password":
+            $jwt = $_SERVER["HTTP_X_ACCESS_TOKEN"];
 
+            if (!isValidHeader($jwt, JWT_SECRET_KEY)) {
+                $res->isSuccess = FALSE;
+                $res->code = 511;
+                $res->message = "유효하지 않은 토큰입니다";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                addErrorLogs($errorLogs, $res, $req);
+                return;
+            }
+            $oldPassword = $req -> oldPassword;
+            $newPassword = $req -> newPassword;
+            $reNewPassword = $req -> reNewPassword;
+            $blank = ' ';
+            $data = getDataByJWToken($jwt, JWT_SECRET_KEY);
+
+            if(!isset($oldPassword)  || !strpos($oldPassword,$blank)==false || empty($oldPassword) ||
+                !isset($newPassword)  || !strpos($newPassword,$blank)==false || empty($newPassword)||
+                !isset($reNewPassword)  || !strpos($reNewPassword,$blank)==false || empty($reNewPassword)) {
+                echo 1;
+                $res->isSuccess = false;
+                $res->code = 500;
+                $res->message = "잘못된 형식의 입력값입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if($oldPassword!=$data->password){
+                $res->isSuccess = false;
+                $res->code = 504;
+                $res->message = "비밀번호가 일치하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if($newPassword != $reNewPassword){
+                $res->isSuccess = false;
+                $res->code = 504;
+                $res->message = "비밀번호가 일치하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if(!preg_match("/^[A-Za-z0-9+]{4,12}$/",$reNewPassword)
+             || !preg_match("/^[A-Za-z0-9+]{4,12}$/", $newPassword)){
+                $res->isSuccess = false;
+                $res->code = 503;
+                $res->message = "비밀번호는 영어, 숫자를 포함한 6~10자리입니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            if($oldPassword!= $data->password){
+                $res->isSuccess = false;
+                $res->code = 504;
+                $res->message = "비밀번호가 일치하지 않습니다.";
+                echo json_encode($res, JSON_NUMERIC_CHECK);
+                return;
+            }
+
+            newPassword($newPassword, $data->email);
+            $res->isSuccess = false;
+            $res->code = 109;
+            $res->message = "비밀번호 변경에 성공하였습니다.";
+            echo json_encode($res, JSON_NUMERIC_CHECK);
+            break;
 
     }
 } catch (\Exception $e) {

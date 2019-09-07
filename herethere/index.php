@@ -4,6 +4,7 @@ require './pdos/IndexPdo.php';
 require './pdos/UserPdo.php';
 require './pdos/PostPdo.php';
 require './pdos/CommentPdo.php';
+require './pdos/MailPdo.php';
 require './vendor/autoload.php';
 
 use \Monolog\Logger as Logger;
@@ -36,6 +37,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->addRoute('GET', '/user/{email}/profile', ['UserController', 'profile']);
     $r->addRoute('GET', '/user/{email}/posts', ['UserController', 'userPosts']);
     $r->addRoute('GET', '/user/{email}/posts/pictures', ['UserController', 'userPictures']);
+    $r->addRoute('POST', '/mail/password', ['MailController', 'sendMail']);
+    $r->addRoute('GET', '/mail/password', ['MailController', 'openMail']);
+    $r->addRoute('PUT', '/password', ['UserController', 'password']);
 
 
 
@@ -111,11 +115,13 @@ switch ($routeInfo[0]) {
                 require './controllers/CommentController.php';
                 break;
 
-            /*case 'SearchController':
-                $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
-                require './controllers/SearchController.php';
+            case 'MailController':
+                $handler = $routeInfo[1][1];
+                $vars = $routeInfo[2];
+                require './controllers/MailController.php';
                 break;
-            case 'ReviewController':
+
+            /*case 'ReviewController':
                 $handler = $routeInfo[1][1]; $vars = $routeInfo[2];
                 require './controllers/ReviewController.php';
                 break;

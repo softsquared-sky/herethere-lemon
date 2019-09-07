@@ -296,6 +296,17 @@ function isExistPicture($no, $email){
     }
 }
 
+function newPassword($newPassword, $email){
+    $pdo = pdoSqlConnect();
+    $query = "UPDATE User SET password=? WHERE email = ?;";
+//    SELECT postNo, COUNT(*) AS comment FROM Comment where postNo = ?;
+    $st = $pdo->prepare($query);
+    $st->bindParam(1, $newPassword, PDO::PARAM_STR);
+    $st->bindParam(2, $email, PDO::PARAM_STR);
+    $st->execute();
+
+}
+
 
 
 

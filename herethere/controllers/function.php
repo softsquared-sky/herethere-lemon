@@ -28,6 +28,18 @@ function isValidHeader($jwt, $key)
     }
 }
 
+function getEmailByToken($jwt, $key)
+{
+    try {
+        $data = getDataByJWToken($jwt, $key);
+        //로그인 함수 직접 구현 요함
+        $tokenEmail = $data->email;
+        return $tokenEmail;
+    } catch (\Exception $e) {
+        return false;
+    }
+}
+
 function isValidAdmin($jwt, $key)
 {
     try {
@@ -99,6 +111,22 @@ function getJWToken($email, $password , $secretKey)
 //    echo json_encode($data);
 
     return $jwt = JWT::encode($data, $secretKey);
+
+//    echo "encoded jwt: " . $jwt . "n";
+//    $decoded = JWT::decode($jwt, $secretKey, array('HS256'))
+//    print_r($decoded);
+}
+
+function getEmailToken($email , $secretKey)
+{
+    $data = array(
+        'date' => (string)getTodayByTimeStamp(),
+        'email' => (string)$email,
+    );
+
+//    echo json_encode($data);
+
+    return $emailToken = JWT::encode($data, $secretKey);
 
 //    echo "encoded jwt: " . $jwt . "n";
 //    $decoded = JWT::decode($jwt, $secretKey, array('HS256'))
@@ -186,4 +214,14 @@ function getLogs($path)
     }
 //        fpassthru($fp);
     fclose($fp);
+}
+
+function generateRandomString($length) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
 }
